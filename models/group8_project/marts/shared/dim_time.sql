@@ -19,7 +19,7 @@ WITH all_times AS (
         FROM {{ ref('stg_motor_vehicle_collisions') }}
     )
 
-    UNION ALL
+    UNION DISTINCT
 
     -- Sentinel NULL row for any nullable time FK in fact tables.
     SELECT NULL AS hour, NULL AS minute
