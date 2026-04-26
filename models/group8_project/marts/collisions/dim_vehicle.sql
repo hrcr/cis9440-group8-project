@@ -22,7 +22,6 @@ distinct_types AS (
 
     SELECT DISTINCT vehicle_type
     FROM vehicle_types
-    WHERE vehicle_type IS NOT NULL
 
 )
 
