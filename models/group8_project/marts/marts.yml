@@ -1,0 +1,128 @@
+version: 2
+
+models:
+
+  # Shared dimensions
+  - name: dim_date
+    description: Calendar date dimension shared by 311 service requests and motor vehicle collisions. One row per distinct calendar date plus one sentinel NULL row.
+    columns:
+      - name: date_key
+        description: Surrogate key (MD5 hash of full_date).
+        tests:
+          - not_null
+          - unique
+      - name: full_date
+        description: Calendar date. NULL on the sentinel row.
+      - name: day
+        description: Day of month (1-31).
+      - name: month
+        description: Month number (1-12).
+      - name: month_name
+        description: Full month name (e.g. "January").
+      - name: quarter
+        description: Calendar quarter (1-4).
+      - name: year
+        description: Four-digit year.
+      - name: day_of_week
+        description: Day of week (1=Sunday … 7=Saturday).
+      - name: day_name
+        description: Full day name (e.g. "Monday").
+      - name: is_weekend
+        description: TRUE if Saturday or Sunday.
+
+  - name: dim_time
+    description: Time-of-day dimension shared by 311 and collisions. One row per distinct (hour, minute) plus a sentinel NULL row.
+    columns:
+      - name: time_key
+        description: Surrogate key (MD5 of hour+minute).
+        tests:
+          - not_null
+          - unique
+      - name: hour
+        description: Hour of day (0-23).
+      - name: minute
+        description: Minute (0-59).
+      - name: time_period
+        description: Bucketed period — Morning / Afternoon / Evening / Night.
+
+  - name: dim_location
+    description: Location dimension shared by 311 and collisions. One row per distinct (city, borough, zip_code) combination. Collision rows have city = NULL since that field is not in collisions data.
+    columns:
+      - name: location_key
+        description: Surrogate key (MD5 of city+borough+zip_code).
+        tests:
+          - not_null
+          - unique
+      - name: city
+        description: City name from 311 (NULL for collision-only locations).
+      - name: borough
+        description: NYC borough — Manhattan, Bronx, Brooklyn, Queens, Staten Island.
+      - name: zip_code
+        description: 5-digit US ZIP code.
+
+  # 311 dimensions
+  - name: dim_agency
+    description: Agency dimension for 311 service requests (NYPD and DOT).
+    columns:
+      - name: agency_key
+        description: Surrogate key.
+        tests:
+          - not_null
+          - unique
+      - name: agency_code
+        description: Short agency code (e.g. NYPD, DOT).
+      - name: agency_name
+        description: Full agency name.
+
+  - name: dim_complaint
+    description: Complaint dimension for 311 service requests. One row per distinct (complaint_type, location_type) pair.
+    columns:
+      - name: complaint_key
+        description: Surrogate key.
+        tests:
+          - not_null
+          - unique
+      - name: complaint_type
+        description: 311 complaint category.
+      - name: location_type
+        description: Type of location the complaint applies to.
+
+  - name: dim_status
+    description: Status dimension for 311 service requests. Retains status_text as natural key beyond the M3 design — see file header comment.
+    columns:
+      - name: status_key
+        description: Surrogate key (hash of status text).
+        tests:
+          - not_null
+          - unique
+      - name: status_text
+        description: Original status value from staging — natural key.
+      - name: is_inprogress
+        description: TRUE for IN PROGRESS, STARTED, ASSIGNED.
+      - name: is_active
+        description: TRUE for any non-CLOSED status.
+      - name: is_closed
+        description: TRUE only when status = CLOSED.
+
+  # Collision dimensions
+  - name: dim_vehicle
+    description: Vehicle dimension for motor vehicle collisions. Distinct vehicle types from all five vehicle slots, plus NULL sentinel for empty slots.
+    columns:
+      - name: vehicle_key
+        description: Surrogate key.
+        tests:
+          - not_null
+          - unique
+      - name: vehicle_type
+        description: Free-text vehicle-type value from NYC collision data.
+
+  - name: dim_contributing_factors
+    description: Contributing-factor dimension for motor vehicle collisions. Distinct factors from all five factor slots, plus NULL sentinel.
+    columns:
+      - name: contributing_factor_vehicle_key
+        description: Surrogate key.
+        tests:
+          - not_null
+          - unique
+      - name: contributing_factor_for_vehicle
+        description: Driver/vehicle behavior cited as contributing to the crash.
