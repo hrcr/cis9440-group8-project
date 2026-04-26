@@ -15,7 +15,7 @@ WITH all_dates AS (
         FROM {{ ref('stg_motor_vehicle_collisions') }}
     )
 
-    UNION ALL
+    UNION DISTINCT
 
     -- Sentinel NULL row for nullable date FKs in fact tables.
     SELECT CAST(NULL AS DATE) AS full_date
