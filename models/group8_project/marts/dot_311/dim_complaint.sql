@@ -8,6 +8,13 @@ WITH complaints AS (
         location_type
     FROM {{ ref('stg_nyc_311_dot') }}
 
+    UNION DISTINCT
+
+    -- Sentinel NULL row for fact-table FK safety
+    SELECT
+        CAST(NULL AS STRING) AS complaint_type,
+        CAST(NULL AS STRING) AS location_type
+
 )
 
 SELECT
