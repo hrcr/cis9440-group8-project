@@ -18,6 +18,9 @@ WITH all_times AS (
         EXTRACT(MINUTE FROM crash_time) AS minute
     FROM {{ ref('stg_motor_vehicle_collisions') }}
     WHERE crash_time IS NOT NULL
+    UNION ALL
+
+    SELECT NULL AS hour, NULL AS minute
 
 ),
 
