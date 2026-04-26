@@ -7,7 +7,6 @@ WITH complaints AS (
         complaint_type,
         location_type
     FROM {{ ref('stg_nyc_311_dot') }}
-    WHERE complaint_type IS NOT NULL
 
 )
 
