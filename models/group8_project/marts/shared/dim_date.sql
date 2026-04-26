@@ -14,6 +14,9 @@ WITH all_dates AS (
     SELECT DISTINCT crash_date AS full_date
     FROM {{ ref('stg_motor_vehicle_collisions') }}
     WHERE crash_date IS NOT NULL
+    UNION ALL
+
+    SELECT CAST(NULL AS DATE) AS full_date
 
 ),
 
