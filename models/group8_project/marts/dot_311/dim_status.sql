@@ -12,7 +12,6 @@ WITH status_values AS (
 
     SELECT DISTINCT status
     FROM {{ ref('stg_nyc_311_dot') }}
-    WHERE status IS NOT NULL
 
 )
 
