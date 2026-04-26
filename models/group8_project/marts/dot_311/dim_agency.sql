@@ -8,7 +8,6 @@ WITH agencies AS (
         agency      AS agency_code,
         agency_name
     FROM {{ ref('stg_nyc_311_dot') }}
-    WHERE agency IS NOT NULL
 
 )
 
