@@ -9,6 +9,13 @@ WITH agencies AS (
         agency_name
     FROM {{ ref('stg_nyc_311_dot') }}
 
+    UNION DISTINCT
+
+    -- Sentinel NULL row for fact-table FK safety
+    SELECT
+        CAST(NULL AS STRING) AS agency_code,
+        CAST(NULL AS STRING) AS agency_name
+
 )
 
 SELECT
