@@ -3,19 +3,21 @@
 
 WITH all_dates AS (
 
-    -- Dates from 311 service requests (timestamp → date)
-    SELECT DISTINCT CAST(created_date AS DATE) AS full_date
-    FROM {{ ref('stg_nyc_311_dot') }}
-    WHERE created_date IS NOT NULL
+    (
+        -- Dates from 311 service requests (timestamp → date)
+        SELECT DISTINCT CAST(created_date AS DATE) AS full_date
+        FROM {{ ref('stg_nyc_311_dot') }}
 
-    UNION DISTINCT
+        UNION DISTINCT
 
-    -- Dates from motor vehicle collisions (already a date)
-    SELECT DISTINCT crash_date AS full_date
-    FROM {{ ref('stg_motor_vehicle_collisions') }}
-    WHERE crash_date IS NOT NULL
+        -- Dates from motor vehicle collisions (already a date)
+        SELECT DISTINCT crash_date AS full_date
+        FROM {{ ref('stg_motor_vehicle_collisions') }}
+    )
+
     UNION ALL
 
+    -- Sentinel NULL row for nullable date FKs in fact tables.
     SELECT CAST(NULL AS DATE) AS full_date
 
 ),
