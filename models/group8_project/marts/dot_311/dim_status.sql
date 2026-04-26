@@ -13,6 +13,11 @@ WITH status_values AS (
     SELECT DISTINCT status
     FROM {{ ref('stg_nyc_311_dot') }}
 
+    UNION DISTINCT
+
+    -- Sentinel NULL row for fact-table FK safety
+    SELECT CAST(NULL AS STRING) AS status
+
 )
 
 SELECT
