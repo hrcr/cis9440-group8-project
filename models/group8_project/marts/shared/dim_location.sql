@@ -22,3 +22,17 @@ WITH all_locations AS (
     FROM {{ ref('stg_motor_vehicle_collisions') }}
 
 ),
+
+location_dimension AS (
+
+    SELECT
+        {{ dbt_utils.generate_surrogate_key(['city', 'borough', 'zip_code']) }} AS location_key,
+        city,
+        borough,
+        zip_code
+    FROM all_locations
+
+)
+
+SELECT *
+FROM location_dimension
