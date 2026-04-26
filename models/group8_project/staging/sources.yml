@@ -2,7 +2,7 @@ version: 2
 sources:
   - name: raw
     description: Raw source tables for Group 8 project
-    database: hrvojerubesa-cis9440-s26 #changed from natalias az-dwh-class
+    database: hrvojerubesa-cis9440-s26 #changed from natalia's az-dwh-class
     schema: cis9440_group8_dataset
     tables:
       - name: raw_311_requests
