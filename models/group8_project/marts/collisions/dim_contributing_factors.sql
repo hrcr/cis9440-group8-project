@@ -3,8 +3,9 @@
 --
 -- NOTE: NULL is intentionally retained as a dim row. Most collisions involve
 -- fewer than 5 vehicles, so contributing_factor_vehicle_3/4/5 are NULL in
--- staging. The fact table will hash those NULL inputs to the same surrogate
--- key as this dim's NULL row, so the join is non-orphan.
+-- staging. Keeping the NULL row makes those "Unknown" cases visible in
+-- dimension-level analysis even though, with the lookup-join pattern in the
+-- fact table, NULL staging values produce NULL FKs via LEFT JOIN.
 
 -- Fact-table join: in fact_collision, look up the surrogate key by LEFT JOINing 
 -- this dim on the natural key column (contributing_factor_for_vehicle), once per vehicle slot. 
