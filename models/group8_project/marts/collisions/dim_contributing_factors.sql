@@ -5,10 +5,10 @@
 -- fewer than 5 vehicles, so contributing_factor_vehicle_3/4/5 are NULL in
 -- staging. The fact table will hash those NULL inputs to the same surrogate
 -- key as this dim's NULL row, so the join is non-orphan.
---
--- Fact-table join: fact_collision has five contributing_factor_vehicle_N_key columns,
--- each populated by hashing the corresponding staging column with the same
--- generate_surrogate_key recipe used here.
+
+-- Fact-table join: in fact_collision, look up the surrogate key by LEFT JOINing 
+-- this dim on the natural key column (contributing_factor_for_vehicle), once per vehicle slot. 
+-- Per Lec 10, the dimension is the single authority for the surrogate key.
 
 WITH factors AS (
 
