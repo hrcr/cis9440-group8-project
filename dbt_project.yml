@@ -26,7 +26,3 @@ models:
       marts:
         +materialized: table
         +schema: cis9440_group8_marts
-
-      facts:
-        +materialized: table
-        +schema: cis9440_group8_facts
