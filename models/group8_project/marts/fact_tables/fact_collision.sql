@@ -81,6 +81,12 @@ joined AS (
         COALESCE(stg.number_of_persons_injured, 0) +
         COALESCE(stg.number_of_persons_killed,  0) AS total_victims,
 
+        -- Degenerate dimensions (street names kept on fact, not worth own dim)
+        stg.on_street_name,
+        stg.off_street_name,
+        stg.cross_street_name,
+        stg.latitude,
+        stg.longitude,
 
 
     FROM stg
