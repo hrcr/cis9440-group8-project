@@ -103,22 +103,14 @@ joined AS (
     LEFT JOIN dim_location dl ON CAST(NULL AS STRING) = dl.city   -- always NULL for collisions
                               AND stg.borough         = dl.borough
                               AND stg.zip_code        = dl.zip_code
-<<<<<<< HEAD
-
-=======
     
->>>>>>> 220ed74cb36bcb50de2934ae99c4a0bfa89e20d4
     -- Vehicle type slots
     LEFT JOIN dim_veh vt1 ON stg.vehicle_type_1 = vt1.vehicle_type
     LEFT JOIN dim_veh vt2 ON stg.vehicle_type_2 = vt2.vehicle_type
     LEFT JOIN dim_veh vt3 ON stg.vehicle_type_3 = vt3.vehicle_type
     LEFT JOIN dim_veh vt4 ON stg.vehicle_type_4 = vt4.vehicle_type
     LEFT JOIN dim_veh vt5 ON stg.vehicle_type_5 = vt5.vehicle_type
-<<<<<<< HEAD
-
-=======
     
->>>>>>> 220ed74cb36bcb50de2934ae99c4a0bfa89e20d4
     -- Contributing factor slots
     LEFT JOIN dim_cf cf1 ON stg.contributing_factor_vehicle_1 = cf1.contributing_factor_for_vehicle
     LEFT JOIN dim_cf cf2 ON stg.contributing_factor_vehicle_2 = cf2.contributing_factor_for_vehicle
