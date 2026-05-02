@@ -92,11 +92,6 @@ joined AS (
         stg.latitude,
         stg.longitude,
 
-        -- Raw timestamps (kept for display and interval calculations in BI tools)
-        stg.created_date,
-        stg.closed_date,
-        stg.due_date,
-        stg.resolution_action_date,
 
         -- Measures
         CASE

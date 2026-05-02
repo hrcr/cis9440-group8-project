@@ -45,10 +45,10 @@ joined AS (
         stg.collision_id,
 
         -- Date FK
-        dd.date_key,
+        dd.date_key AS crash_date_key,
 
         -- Time FK
-        dt.time_key,
+        dt.time_key AS crash_time_key,
 
         -- Location FK  (collision has no city → NULL city matches dim_location NULL-city rows)
         dl.location_key,
@@ -100,23 +100,24 @@ joined AS (
                            AND EXTRACT(MINUTE FROM stg.crash_time) = dt.minute
 
     -- Location (collision has no city field → join with NULL city)
-    LEFT JOIN dim_location dl ON CAST(NULL AS STRING) = dl.city   -- always NULL for collisions
+    LEFT JOIN dim_location dl ON CAST(NULL AS STRING) = dl.city
                               AND stg.borough         = dl.borough
                               AND stg.zip_code        = dl.zip_code
     
-    -- Vehicle type slots
+    -- Vehicle type slots (LEFT JOIN so NULL vehicle types → NULL FK)
     LEFT JOIN dim_veh vt1 ON stg.vehicle_type_1 = vt1.vehicle_type
     LEFT JOIN dim_veh vt2 ON stg.vehicle_type_2 = vt2.vehicle_type
     LEFT JOIN dim_veh vt3 ON stg.vehicle_type_3 = vt3.vehicle_type
     LEFT JOIN dim_veh vt4 ON stg.vehicle_type_4 = vt4.vehicle_type
     LEFT JOIN dim_veh vt5 ON stg.vehicle_type_5 = vt5.vehicle_type
-    
-    -- Contributing factor slots
+
+    -- Contributing factor slots (LEFT JOIN so NULL factors → NULL FK)
     LEFT JOIN dim_cf cf1 ON stg.contributing_factor_vehicle_1 = cf1.contributing_factor_for_vehicle
     LEFT JOIN dim_cf cf2 ON stg.contributing_factor_vehicle_2 = cf2.contributing_factor_for_vehicle
     LEFT JOIN dim_cf cf3 ON stg.contributing_factor_vehicle_3 = cf3.contributing_factor_for_vehicle
     LEFT JOIN dim_cf cf4 ON stg.contributing_factor_vehicle_4 = cf4.contributing_factor_for_vehicle
     LEFT JOIN dim_cf cf5 ON stg.contributing_factor_vehicle_5 = cf5.contributing_factor_for_vehicle
+
 )
 
 SELECT
