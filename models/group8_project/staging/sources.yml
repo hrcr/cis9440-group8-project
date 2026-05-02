@@ -2,7 +2,7 @@ version: 2
 sources:
   - name: raw
     description: Raw source tables for Group 8 project
-    database: az-dwh-class
+    database: hrvojerubesa-cis9440-s26 #changed from natalia's az-dwh-class
     schema: cis9440_group8_dataset
     tables:
       - name: raw_311_requests
@@ -35,7 +35,7 @@ sources:
           - name: resolution_action_updated_date
           - name: community_board
           - name: council_district
-          - name: police_precint
+          - name: police_precinct
           - name: bbl
           - name: borough
           - name: x_coordinate_state_plane
