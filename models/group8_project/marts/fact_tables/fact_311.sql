@@ -76,7 +76,7 @@ joined AS (
         stg.opendata_channel_type,
         stg.problem_detail,
         stg.additional_details,
-        stg.vehicle_type,
+        stg.vehicle_type AS vehicle_in_complaint,
         stg.resolution_description,
         stg.latitude,
         stg.longitude,
