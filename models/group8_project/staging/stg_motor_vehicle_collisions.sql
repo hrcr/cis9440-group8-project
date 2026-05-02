@@ -386,8 +386,6 @@ cleaned AS (
                     '9999','99999','0','00','000','13','17','430','985','994','997','999',
                     'NTTRL','YNK','YPS','-','.',',','omm'
                 )
-              OR vehicle_type_code1 IS NULL
-              OR TRIM(CAST(vehicle_type_code1 AS STRING)) = ''
                 THEN 'Unknown'
 
             ELSE 'Other'
@@ -739,8 +737,6 @@ cleaned AS (
                     '9999','99999','0','00','000','13','17','430','985','994','997','999',
                     'NTTRL','YNK','YPS','-','.',',','omm'
                 )
-              OR vehicle_type_code2 IS NULL
-              OR TRIM(CAST(vehicle_type_code2 AS STRING)) = ''
                 THEN 'Unknown'
 
             ELSE 'Other'
@@ -1092,8 +1088,6 @@ cleaned AS (
                     '9999','99999','0','00','000','13','17','430','985','994','997','999',
                     'NTTRL','YNK','YPS','-','.',',','omm'
                 )
-              OR vehicle_type_code_3 IS NULL
-              OR TRIM(CAST(vehicle_type_code_3 AS STRING)) = ''
                 THEN 'Unknown'
 
             ELSE 'Other'
@@ -1445,8 +1439,6 @@ cleaned AS (
                     '9999','99999','0','00','000','13','17','430','985','994','997','999',
                     'NTTRL','YNK','YPS','-','.',',','omm'
                 )
-              OR vehicle_type_code_4 IS NULL
-              OR TRIM(CAST(vehicle_type_code_4 AS STRING)) = ''
                 THEN 'Unknown'
 
             ELSE 'Other'
@@ -1798,8 +1790,6 @@ cleaned AS (
                     '9999','99999','0','00','000','13','17','430','985','994','997','999',
                     'NTTRL','YNK','YPS','-','.',',','omm'
                 )
-              OR vehicle_type_code_5 IS NULL
-              OR TRIM(CAST(vehicle_type_code_5 AS STRING)) = ''
                 THEN 'Unknown'
 
             ELSE 'Other'
