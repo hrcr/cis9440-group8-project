@@ -387,7 +387,7 @@ cleaned AS (
                     'NTTRL','YNK','YPS','-','.',',','omm'
                 )
                 THEN 'Unknown'
-
+            WHEN vehicle_type_code1 IS NULL THEN NULL
             ELSE 'Other'
         END AS vehicle_type_1,
 
@@ -738,7 +738,7 @@ cleaned AS (
                     'NTTRL','YNK','YPS','-','.',',','omm'
                 )
                 THEN 'Unknown'
-
+            WHEN vehicle_type_code2 IS NULL THEN NULL
             ELSE 'Other'
         END AS vehicle_type_2,
 
@@ -1089,7 +1089,7 @@ cleaned AS (
                     'NTTRL','YNK','YPS','-','.',',','omm'
                 )
                 THEN 'Unknown'
-
+            WHEN vehicle_type_code_3 IS NULL THEN NULL
             ELSE 'Other'
         END AS vehicle_type_3,
 
@@ -1440,7 +1440,7 @@ cleaned AS (
                     'NTTRL','YNK','YPS','-','.',',','omm'
                 )
                 THEN 'Unknown'
-
+            WHEN vehicle_type_code_4 IS NULL THEN NULL
             ELSE 'Other'
         END AS vehicle_type_4,
 
@@ -1791,7 +1791,7 @@ cleaned AS (
                     'NTTRL','YNK','YPS','-','.',',','omm'
                 )
                 THEN 'Unknown'
-
+            WHEN vehicle_type_code_5 IS NULL THEN NULL
             ELSE 'Other'
         END AS vehicle_type_5,
 
