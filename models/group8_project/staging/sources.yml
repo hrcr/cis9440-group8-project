@@ -35,7 +35,7 @@ sources:
           - name: resolution_action_updated_date
           - name: community_board
           - name: council_district
-          - name: police_precint
+          - name: police_precinct
           - name: bbl
           - name: borough
           - name: x_coordinate_state_plane
