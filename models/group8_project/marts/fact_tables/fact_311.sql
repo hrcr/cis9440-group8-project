@@ -76,6 +76,7 @@ joined AS (
         stg.opendata_channel_type,
         stg.problem_detail,
         stg.additional_details,
+        stg.vehicle_type,
         stg.resolution_description,
         stg.latitude,
         stg.longitude,
