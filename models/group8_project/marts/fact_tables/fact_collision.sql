@@ -67,13 +67,6 @@ joined AS (
         cf4.contributing_factor_vehicle_key AS contributing_factor_key_v4,
         cf5.contributing_factor_vehicle_key AS contributing_factor_key_v5,
 
-        -- Contributing factor FKs (one per vehicle slot)
-        cf1.contributing_factor_vehicle_key AS contributing_factor_key_v1,
-        cf2.contributing_factor_vehicle_key AS contributing_factor_key_v2,
-        cf3.contributing_factor_vehicle_key AS contributing_factor_key_v3,
-        cf4.contributing_factor_vehicle_key AS contributing_factor_key_v4,
-        cf5.contributing_factor_vehicle_key AS contributing_factor_key_v5,
-
         -- Measures
         stg.number_of_persons_injured,
         stg.number_of_persons_killed,
