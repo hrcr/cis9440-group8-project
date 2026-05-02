@@ -1,14 +1,43 @@
 -- Time-of-day dimension shared by 311 service requests and motor vehicle collisions.
 -- Grain: one row per distinct (hour, minute) observed across both fact streams.
+-- Covers: created_date, closed_date, due_date, resolution_action_date (311)
+--         and crash_time (collisions).
 
 WITH all_times AS (
 
     (
-        -- Time component from 311 created_date (timestamp → time)
+        -- Time from 311 created_date (timestamp → time)
         SELECT DISTINCT
             EXTRACT(HOUR   FROM created_date) AS hour,
             EXTRACT(MINUTE FROM created_date) AS minute
         FROM {{ ref('stg_nyc_311_dot') }}
+
+        UNION DISTINCT
+
+        -- Time from 311 closed_date (NULL when still open)
+        SELECT DISTINCT
+            EXTRACT(HOUR   FROM closed_date) AS hour,
+            EXTRACT(MINUTE FROM closed_date) AS minute
+        FROM {{ ref('stg_nyc_311_dot') }}
+        WHERE closed_date IS NOT NULL
+
+        UNION DISTINCT
+
+        -- Time from 311 due_date (NULL when not set)
+        SELECT DISTINCT
+            EXTRACT(HOUR   FROM due_date) AS hour,
+            EXTRACT(MINUTE FROM due_date) AS minute
+        FROM {{ ref('stg_nyc_311_dot') }}
+        WHERE due_date IS NOT NULL
+
+        UNION DISTINCT
+
+        -- Time from 311 resolution_action_date (NULL when not set)
+        SELECT DISTINCT
+            EXTRACT(HOUR   FROM resolution_action_date) AS hour,
+            EXTRACT(MINUTE FROM resolution_action_date) AS minute
+        FROM {{ ref('stg_nyc_311_dot') }}
+        WHERE resolution_action_date IS NOT NULL
 
         UNION DISTINCT
 
