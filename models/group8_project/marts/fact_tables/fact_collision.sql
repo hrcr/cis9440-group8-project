@@ -88,7 +88,6 @@ joined AS (
         stg.latitude,
         stg.longitude,
 
-        stg._stg_loaded_at
 
     FROM stg
 

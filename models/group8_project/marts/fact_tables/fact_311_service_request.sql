@@ -107,7 +107,6 @@ joined AS (
             ELSE FALSE
         END AS is_overdue,
 
-        stg._stg_loaded_at
 
     FROM stg
 
