@@ -9,7 +9,7 @@ WITH all_locations AS (
         city,
         borough,
         incident_zip AS zip_code
-    FROM {{ ref('stg_group8_nyc_311_dot') }}
+    FROM {{ ref('stg_nyc_311_dot') }}
 
     UNION DISTINCT
 
@@ -17,7 +17,7 @@ WITH all_locations AS (
         CAST(NULL AS STRING) AS city,
         borough,
         zip_code
-    FROM {{ ref('stg_group8_motor_vehicle_collisions') }}
+    FROM {{ ref('stg_motor_vehicle_collisions') }}
 
 ),
 

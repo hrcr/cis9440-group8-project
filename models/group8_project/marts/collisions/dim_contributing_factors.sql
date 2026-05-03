@@ -4,27 +4,27 @@
 WITH factors AS (
 
     SELECT contributing_factor_vehicle_1 AS contributing_factor_for_vehicle
-    FROM {{ ref('stg_group8_motor_vehicle_collisions') }}
+    FROM {{ ref('stg_motor_vehicle_collisions') }}
 
     UNION DISTINCT
 
     SELECT contributing_factor_vehicle_2
-    FROM {{ ref('stg_group8_motor_vehicle_collisions') }}
+    FROM {{ ref('stg_motor_vehicle_collisions') }}
 
     UNION DISTINCT
 
     SELECT contributing_factor_vehicle_3
-    FROM {{ ref('stg_group8_motor_vehicle_collisions') }}
+    FROM {{ ref('stg_motor_vehicle_collisions') }}
 
     UNION DISTINCT
 
     SELECT contributing_factor_vehicle_4
-    FROM {{ ref('stg_group8_motor_vehicle_collisions') }}
+    FROM {{ ref('stg_motor_vehicle_collisions') }}
 
     UNION DISTINCT
 
     SELECT contributing_factor_vehicle_5
-    FROM {{ ref('stg_group8_motor_vehicle_collisions') }}
+    FROM {{ ref('stg_motor_vehicle_collisions') }}
 
 ),
 
