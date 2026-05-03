@@ -1,16 +1,36 @@
 -- Date dimension shared by 311 service requests and motor vehicle collisions.
 -- Builds one row per distinct calendar date observed across both fact streams.
+-- Covers: created_date, closed_date, due_date, resolution_action_date (311)
+--         and crash_date (collisions).
 
 WITH all_dates AS (
 
     (
-        -- Dates from 311 service requests (timestamp → date)
+        -- created_date from 311 service requests (timestamp → date)
         SELECT DISTINCT CAST(created_date AS DATE) AS full_date
         FROM {{ ref('stg_nyc_311_dot') }}
 
         UNION DISTINCT
 
-        -- Dates from motor vehicle collisions (already a date)
+        -- closed_date from 311 service requests (NULL when still open)
+        SELECT DISTINCT CAST(closed_date AS DATE) AS full_date
+        FROM {{ ref('stg_nyc_311_dot') }}
+
+        UNION DISTINCT
+
+        -- due_date from 311 service requests (NULL when not set)
+        SELECT DISTINCT CAST(due_date AS DATE) AS full_date
+        FROM {{ ref('stg_nyc_311_dot') }}
+
+        UNION DISTINCT
+
+        -- resolution_action_date from 311 service requests (NULL when not set)
+        SELECT DISTINCT CAST(resolution_action_date AS DATE) AS full_date
+        FROM {{ ref('stg_nyc_311_dot') }}
+
+        UNION DISTINCT
+
+        -- crash_date from motor vehicle collisions (already a date)
         SELECT DISTINCT crash_date AS full_date
         FROM {{ ref('stg_motor_vehicle_collisions') }}
     )
