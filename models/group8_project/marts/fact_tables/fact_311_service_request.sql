@@ -16,66 +16,63 @@
 --
 -- Elapsed-time measure: resolution_hours is the difference in hours between
 -- created_date and closed_date. NULL when the request is still open.
-
 WITH stg AS (
-
     SELECT * FROM {{ ref('stg_nyc_311_dot') }}
-
 ),
-
 -- ── Dimension lookups ────────────────────────────────────────────────────────
-
 dim_date AS (
     SELECT date_key, full_date FROM {{ ref('dim_date') }}
 ),
-
 dim_time AS (
     SELECT time_key, hour, minute FROM {{ ref('dim_time') }}
 ),
-
+-- >>> CHANGED: pre-aggregate dim_location to one canonical location_key per
+-- (borough, zip_code). The previous join used raw staging values for city,
+-- borough, and zip, but dim_location internally applies INITCAP/TRIM/NULLIF
+-- and a 'NEW YORK CITY' -> 'New York' remap, so raw staging values almost
+-- never matched the cleaned dim values. Result: only a tiny fraction of
+-- 311 rows survived the inner join, leaving fact_311.location_key mostly
+-- broken. Aggregating to (borough, zip_code) gives us a unique location_key
+-- per geographic area, which is what borough-level analytics need.
 dim_location AS (
-    SELECT location_key, city, borough, zip_code FROM {{ ref('dim_location') }}
+    SELECT
+        MIN(location_key) AS location_key,
+        borough,
+        zip_code
+    FROM {{ ref('dim_location') }}
+    WHERE borough IS NOT NULL
+      AND zip_code IS NOT NULL
+    GROUP BY borough, zip_code
 ),
-
 dim_agency AS (
     SELECT agency_key, agency_code, agency_name FROM {{ ref('dim_agency') }}
 ),
-
 dim_complaint AS (
     SELECT complaint_key, complaint_type, location_type FROM {{ ref('dim_complaint') }}
 ),
-
 dim_status AS (
     SELECT status_key, status_text FROM {{ ref('dim_status') }}
 ),
-
 -- ── Join everything onto the staging grain ──────────────────────────────────
-
 joined AS (
-
     SELECT
         -- Natural key
         stg.unique_key,
-
         -- Date FKs
         dd_created.date_key            AS created_date_key,
         dd_closed.date_key             AS closed_date_key,            -- NULL if still open
         dd_due.date_key                AS due_date_key,               -- NULL if not set
         dd_resolution.date_key         AS resolution_action_date_key, -- NULL if not set
-
         -- Time FKs
         dt_created.time_key            AS created_time_key,
         dt_due.time_key                AS due_time_key,               -- NULL if not set
         dt_resolution.time_key         AS resolution_action_time_key, -- NULL if not set
-
         -- Location FK
         dl.location_key,
-
         -- 311-specific dimension FKs
         da.agency_key,
         dc.complaint_key,
         ds.status_key,
-
         -- Degenerate dimensions (high-cardinality; not worth own dim table)
         stg.incident_address,
         stg.street_name,
@@ -91,67 +88,55 @@ joined AS (
         stg.resolution_description,
         stg.latitude,
         stg.longitude,
-
-
         -- Measures
         CASE
             WHEN stg.closed_date IS NOT NULL
             THEN TIMESTAMP_DIFF(stg.closed_date, stg.created_date, HOUR)
             ELSE NULL
         END AS resolution_hours,
-
         -- Boolean flags (convenience measures)
         CASE WHEN stg.closed_date IS NOT NULL THEN TRUE ELSE FALSE END AS is_resolved,
         CASE
             WHEN stg.due_date IS NOT NULL AND stg.closed_date > stg.due_date THEN TRUE
             ELSE FALSE
         END AS is_overdue,
-
-
     FROM stg
-
     -- Created date
     LEFT JOIN dim_date dd_created    ON CAST(stg.created_date          AS DATE) = dd_created.full_date
-
     -- Closed date (may be NULL)
     LEFT JOIN dim_date dd_closed     ON CAST(stg.closed_date           AS DATE) = dd_closed.full_date
-
     -- Due date (may be NULL)
     LEFT JOIN dim_date dd_due        ON CAST(stg.due_date              AS DATE) = dd_due.full_date
-
     -- Resolution action date (may be NULL)
     LEFT JOIN dim_date dd_resolution ON CAST(stg.resolution_action_date AS DATE) = dd_resolution.full_date
-
     -- Time of creation
     LEFT JOIN dim_time dt_created    ON EXTRACT(HOUR   FROM stg.created_date)          = dt_created.hour
                                     AND EXTRACT(MINUTE FROM stg.created_date)          = dt_created.minute
-
     -- Time of due date (may be NULL)
     LEFT JOIN dim_time dt_due        ON EXTRACT(HOUR   FROM stg.due_date)              = dt_due.hour
                                     AND EXTRACT(MINUTE FROM stg.due_date)              = dt_due.minute
-
     -- Time of resolution action (may be NULL)
     LEFT JOIN dim_time dt_resolution ON EXTRACT(HOUR   FROM stg.resolution_action_date) = dt_resolution.hour
                                     AND EXTRACT(MINUTE FROM stg.resolution_action_date) = dt_resolution.minute
-
-    -- Location (311 has city; join on city + borough + zip)
-    LEFT JOIN dim_location dl        ON stg.city        = dl.city
-                                    AND stg.borough     = dl.borough
-                                    AND stg.incident_zip = dl.zip_code
-
+    -- >>> CHANGED: location join now matches on (borough, zip_code) using the
+    -- same INITCAP/TRIM/NULLIF transformations dim_location applies internally,
+    -- so 'BROOKLYN' in staging matches 'Brooklyn' in dim_location. We dropped
+    -- the city condition because dim_location applies special remappings to
+    -- city ('NEW YORK CITY' -> 'New York', some values nulled out) that don't
+    -- round-trip back to staging's raw values. For borough-level analytics
+    -- this is the right call.
+    LEFT JOIN dim_location dl
+        ON NULLIF(INITCAP(TRIM(stg.borough)), '')  = dl.borough
+       AND NULLIF(TRIM(stg.incident_zip), '')      = dl.zip_code
     -- Agency
     LEFT JOIN dim_agency da          ON stg.agency      = da.agency_code
                                     AND stg.agency_name = da.agency_name
-
     -- Complaint type + location type pair
     LEFT JOIN dim_complaint dc       ON stg.complaint_type = dc.complaint_type
                                     AND stg.location_type  = dc.location_type
-
     -- Status
     LEFT JOIN dim_status ds          ON stg.status = ds.status_text
-
 )
-
 SELECT
     -- Surrogate PK for the fact row
     {{ dbt_utils.generate_surrogate_key(['unique_key']) }} AS request_fact_key,
