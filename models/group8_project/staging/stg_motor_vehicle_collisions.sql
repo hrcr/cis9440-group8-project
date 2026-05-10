@@ -12,7 +12,7 @@ cleaned AS (
         CAST(collision_id AS STRING) AS collision_id,
 
         -- Date / time
-        SAFE_CAST(crash_date AS DATE) AS crash_date,
+        DATE(SAFE_CAST(crash_date AS TIMESTAMP)) AS crash_date,
         SAFE_CAST(crash_time AS TIME) AS crash_time,
 
         -- Location
@@ -1821,7 +1821,7 @@ cleaned AS (
 
     QUALIFY ROW_NUMBER() OVER (
         PARTITION BY collision_id
-        ORDER BY SAFE_CAST(crash_date AS DATE) DESC
+        ORDER BY DATE(SAFE_CAST(crash_date AS TIMESTAMP)) DESC
     ) = 1
 )
 
